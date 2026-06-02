@@ -1,0 +1,10 @@
+<div class="toast toast-bottom bottom-20">
+  <div class="alert alert-error mx-4">
+    <span class="text-lg font-bold">Incidente fue detectado. ¿Desea generar un reporte?</span>
+
+    <div class="flex gap-2">
+      <button class="btn btn-sm" (click)="generateIncidentReport.emit()">Sí</button>
+      <button class="btn btn-sm btn-ghost" (click)="closeSuggestionToast.emit()">No</button>
+    </div>
+  </div>
+</div>

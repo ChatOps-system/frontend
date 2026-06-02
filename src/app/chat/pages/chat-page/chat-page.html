@@ -1,0 +1,22 @@
+<app-chat-messages />
+<section class="sticky bottom-0 left-0 right-0 p-4">
+  <app-chat-input
+    [message]="this.message()"
+    (changeMessage)="this.onChangeMessage($event)"
+    (detectIncident)="this.detectIncident()"
+  />
+</section>
+@if (this.openSuggestionToast()) {
+  <app-suggestion-toast
+    (closeSuggestionToast)="onCloseSuggestionToast()"
+    (generateIncidentReport)="generateIncidentReport()"
+  />
+}
+<dialog #suggestionModal id="suggestionModal" class="modal modal-bottom sm:modal-middle">
+  @if (this.incidentReportSuggested(); as suggestion) {
+    <app-incident-report-suggested
+      [suggestion]="suggestion"
+      (createIncidentReport)="createIncidentReport($event)"
+    />
+  }
+</dialog>

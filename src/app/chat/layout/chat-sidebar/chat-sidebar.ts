@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 @Component({
-  selector: 'app-root',
+  selector: 'app-chat-sidebar',
   imports: [RouterOutlet],
-  templateUrl: './app.html',
+  templateUrl: './chat-sidebar.html',
 })
-export class App {}
+export class ChatSidebar {}

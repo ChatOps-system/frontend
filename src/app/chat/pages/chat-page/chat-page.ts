@@ -6,6 +6,7 @@ import { IncidentDetectedToast } from '../../components/incident-detected-toast/
 import { IncidentReport } from '../../interfaces/incident-report.interface';
 import { IncidentDraft } from '../../components/incident-draft/incident-draft';
 import { tap } from 'rxjs';
+import { IncidentReportsService } from '../../services/incident-reports.service';
 
 @Component({
   selector: 'chat-page',
@@ -15,6 +16,7 @@ import { tap } from 'rxjs';
 export class ChatPage {
   message = signal<string>('');
   chatService = inject(ChatService);
+  incidentReportsService = inject(IncidentReportsService);
   openIncidentDetectedToast = signal<boolean>(false);
   incidentDraft = signal<IncidentReport | null>(null);
   createIncidentReportModal = viewChild<ElementRef<HTMLDialogElement>>('createIncidentReportModal');
@@ -62,7 +64,7 @@ export class ChatPage {
   }
 
   createIncidentReport(incidentReport: IncidentReport) {
-    this.chatService
+    this.incidentReportsService
       .createIncidentReport(incidentReport)
       .pipe(tap(() => this.message.set('')))
       .subscribe((response) => {

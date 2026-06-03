@@ -48,23 +48,3 @@ it('should call generateIncidentDraft endpoint', () => {
     { message: 'something' },
   );
 });
-it('should call createIncidentReport endpoint', () => {
-  const service = TestBed.inject(ChatService);
-
-  const incident = {
-    title: 'A',
-    description: 'B',
-  } as any;
-
-  const mockResponse = { id: 1 };
-  httpMock.post.mockReturnValue(of(mockResponse));
-
-  service.createIncidentReport(incident).subscribe((res) => {
-    expect(res).toEqual(mockResponse);
-  });
-
-  expect(httpMock.post).toHaveBeenCalledWith(
-    `${environment.backendUrl}/incident-reports`,
-    incident,
-  );
-});

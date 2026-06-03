@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-chat-messages',
+  selector: 'chat-messages',
   imports: [],
   templateUrl: './chat-messages.html',
 })

@@ -2,7 +2,8 @@
   <div class="w-full">
     <label class="input join-item w-full">
       <input
-        type="email"
+        type="text"
+        [value]="this.message()"
         (input)="this.changeMessage.emit(textInput.value)"
         class="w-full"
         placeholder="Escribe un mensaje"

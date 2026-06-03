@@ -1,0 +1,82 @@
+<form [formGroup]="incidentReportForm" (ngSubmit)="onSubmit()">
+  <h3 class="text-lg font-bold">Crear Reporte de Incidente</h3>
+  <fieldset class="fieldset">
+    <legend class="fieldset-legend">Título</legend>
+    <input
+      type="text"
+      class="input input-bordered w-full"
+      formControlName="title"
+      placeholder="Ingrese un título"
+    />
+  </fieldset>
+
+  <fieldset class="fieldset">
+    <legend class="fieldset-legend">Descripción</legend>
+    <textarea
+      class="textarea textarea-bordered w-full h-28"
+      formControlName="description"
+      placeholder="Describa el incidente"
+    ></textarea>
+  </fieldset>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <fieldset class="fieldset">
+      <legend class="fieldset-legend">Severidad</legend>
+      <select class="select select-bordered w-full" formControlName="severity">
+        <option>Low</option>
+        <option>Medium</option>
+        <option>High</option>
+        <option>Critical</option>
+      </select>
+    </fieldset>
+
+    <fieldset class="fieldset">
+      <legend class="fieldset-legend">Categoría</legend>
+      <select class="select select-bordered w-full" formControlName="category">
+        <option>Safety</option>
+        <option>Operational</option>
+        <option>Equipment</option>
+        <option>Environmental</option>
+        <option>Security</option>
+      </select>
+    </fieldset>
+  </div>
+
+  <fieldset class="fieldset">
+    <legend class="fieldset-legend">Ubicación</legend>
+    <input
+      type="text"
+      class="input input-bordered w-full"
+      formControlName="location"
+      placeholder="Ubicación del incidente"
+    />
+  </fieldset>
+
+  <fieldset class="fieldset">
+    <legend class="fieldset-legend">Fecha y Hora</legend>
+    <input type="datetime-local" class="input input-bordered w-full" formControlName="occurredAt" />
+  </fieldset>
+
+  <fieldset class="fieldset">
+    <legend class="fieldset-legend">Acciones Inmediatas</legend>
+    <textarea
+      class="textarea textarea-bordered w-full"
+      formControlName="immediateActions"
+      placeholder="Acciones tomadas inmediatamente"
+    ></textarea>
+  </fieldset>
+
+  <fieldset class="fieldset">
+    <legend class="fieldset-legend">Recomendaciones</legend>
+    <textarea
+      class="textarea textarea-bordered w-full"
+      formControlName="recommendations"
+      placeholder="Recomendaciones"
+    ></textarea>
+  </fieldset>
+
+  <div class="modal-action flex justify-between w-full">
+    <button class="btn btn-accent">Crear</button>
+    <button type="button" class="btn" (click)="closeIncidentDraft.emit()">Cancelar</button>
+  </div>
+</form>

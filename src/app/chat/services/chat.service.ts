@@ -3,7 +3,6 @@ import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { DetectIncidentResponse } from '../interfaces/detect-incident-response.interface';
 import { Observable } from 'rxjs';
-import { GenerateIncidentSuggestionResponse } from '../interfaces/generate-incident-suggestion-response.interface';
 import { CreateIncidentReportResponse } from '../interfaces/create-incident-report-response.interface';
 import { IncidentReport } from '../interfaces/incident-report.interface';
 
@@ -18,9 +17,9 @@ export class ChatService {
     );
   }
 
-  generateIncidentSuggestion(message: string): Observable<GenerateIncidentSuggestionResponse> {
-    return this.http.post<GenerateIncidentSuggestionResponse>(
-      `${environment.backendUrl}/chat/generate-incident-suggestion`,
+  generateIncidentDraft(message: string): Observable<IncidentReport> {
+    return this.http.post<IncidentReport>(
+      `${environment.backendUrl}/chat/generate-incident-draft`,
       { message },
     );
   }

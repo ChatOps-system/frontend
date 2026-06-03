@@ -1,7 +1,7 @@
 import { Component, effect, input, output } from '@angular/core';
 
 @Component({
-  selector: 'app-chat-input',
+  selector: 'chat-input',
   imports: [],
   templateUrl: './chat-input.html',
 })

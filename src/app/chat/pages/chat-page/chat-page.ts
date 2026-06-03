@@ -2,28 +2,28 @@ import { Component, effect, ElementRef, inject, signal, viewChild } from '@angul
 import { ChatMessages } from '../../components/chat-messages/chat-messages';
 import { ChatInput } from '../../components/chat-input/chat-input';
 import { ChatService } from '../../services/chat.service';
-import { SuggestionToast } from '../../components/suggestion-toast/suggestion-toast';
-import { IncidentReportSuggested } from '../../components/incident-report-suggested/incident-report-suggested';
+import { IncidentDetectedToast } from '../../components/incident-detected-toast/incident-detected-toast';
 import { IncidentReport } from '../../interfaces/incident-report.interface';
+import { IncidentDraft } from '../../components/incident-draft/incident-draft';
+import { tap } from 'rxjs';
 
 @Component({
-  selector: 'app-chat-page',
-  imports: [ChatMessages, ChatInput, SuggestionToast, IncidentReportSuggested],
+  selector: 'chat-page',
+  imports: [ChatMessages, ChatInput, IncidentDetectedToast, IncidentDraft],
   templateUrl: './chat-page.html',
 })
 export class ChatPage {
   message = signal<string>('');
   chatService = inject(ChatService);
-  openSuggestionToast = signal<boolean>(false);
-  incidentReportSuggested = signal<IncidentReport | null>(null);
-  incidentReportSuggestionModal = viewChild<ElementRef<HTMLDialogElement>>('suggestionModal');
+  openIncidentDetectedToast = signal<boolean>(false);
+  incidentDraft = signal<IncidentReport | null>(null);
+  createIncidentReportModal = viewChild<ElementRef<HTMLDialogElement>>('createIncidentReportModal');
 
-  incidentReportSuggestedEffect = effect(() => {
-    const modal = this.incidentReportSuggestionModal();
-    const suggestion = this.incidentReportSuggested();
-    if (!modal) {
-      return;
-    } else if (!suggestion) {
+  incidentDraftEffect = effect(() => {
+    const modal = this.createIncidentReportModal();
+    const draft = this.incidentDraft();
+    if (!modal) return;
+    if (!draft) {
       modal.nativeElement.close();
       return;
     }
@@ -32,33 +32,41 @@ export class ChatPage {
 
   onChangeMessage(message: string) {
     this.message.set(message);
-    this.openSuggestionToast.set(false);
+    this.openIncidentDetectedToast.set(false);
   }
 
-  onCloseSuggestionToast() {
-    this.incidentReportSuggested.set(null);
-    this.openSuggestionToast.set(false);
+  onCloseIncidentDetectedToast() {
+    this.incidentDraft.set(null);
+    this.openIncidentDetectedToast.set(false);
+  }
+
+  onCloseIncidentDraft() {
+    this.incidentDraft.set(null);
   }
 
   detectIncident() {
     this.chatService.detectIncident(this.message()).subscribe((response) => {
       if (response.incidentDetected) {
-        this.openSuggestionToast.set(true);
+        this.openIncidentDetectedToast.set(true);
       }
     });
   }
 
-  generateIncidentReport() {
-    this.chatService.generateIncidentSuggestion(this.message()).subscribe((response) => {
-      this.incidentReportSuggested.set(response);
-    });
+  generateIncidentDraft() {
+    this.chatService
+      .generateIncidentDraft(this.message())
+      .pipe(tap(() => this.openIncidentDetectedToast.set(false)))
+      .subscribe((response) => {
+        this.incidentDraft.set(response);
+      });
   }
 
   createIncidentReport(incidentReport: IncidentReport) {
-    this.chatService.createIncidentReport(incidentReport).subscribe((response) => {
-      console.log('Incident report created:', response);
-      this.incidentReportSuggested.set(null);
-      this.openSuggestionToast.set(false);
-    });
+    this.chatService
+      .createIncidentReport(incidentReport)
+      .pipe(tap(() => this.message.set('')))
+      .subscribe((response) => {
+        this.incidentDraft.set(null);
+      });
   }
 }

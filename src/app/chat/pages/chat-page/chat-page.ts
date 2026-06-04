@@ -69,14 +69,9 @@ export class ChatPage {
   }
 
   createIncidentReport(incidentReport: IncidentReport) {
-    this.incidentReportsService
-      .createIncidentReport(incidentReport)
-      .pipe(
-        tap(() => {
-          this.message.set('');
-          this.incidentDraft.set(null);
-        }),
-      )
-      .subscribe();
+    this.incidentReportsService.createIncidentReport(incidentReport).subscribe((res) => {
+      this.message.set('');
+      this.incidentDraft.set(null);
+    });
   }
 }

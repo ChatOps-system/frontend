@@ -27,7 +27,7 @@ export class ChatService {
       toast.error('Servicio Backend no response', {
         description: `${err.message}`,
       });
-    } else if (err.status === 500) {
+    } else if (err.status === 503) {
       toast.error('Servicio de Inferencia no response', {
         description: `${err.message}`,
       });

@@ -22,10 +22,13 @@ ng serve
 ng test
 ```
 
-4. Configuración de entorno
-   Ajustar los siguientes archivos:
+4. Configuración de entorno.
 
-- `src/environments/environment.ts`
-- `src/environments/environment.development.ts`
-  Variables a configurar:
+Ajustar los siguientes archivos:
+
+- `src/environments/environment.ts`.
+- `src/environments/environment.development.ts`.
+
+Variables a configurar:
+
 - `backendUrl`: URL de la aplicación Backend de **chatOps**

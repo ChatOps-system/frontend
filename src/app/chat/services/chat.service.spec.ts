@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClient } from '@angular/common/http';
 import { of } from 'rxjs';
-import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { vi, it, expect, beforeEach } from 'vitest';
 
 import { ChatService } from './chat.service';
 import { environment } from '../../../environments/environment';

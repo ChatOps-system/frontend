@@ -37,6 +37,7 @@ export class IncidentDraft {
   });
 
   onSubmit() {
+    if (this.incidentReportForm.invalid) return;
     const {
       title,
       description,
@@ -47,27 +48,15 @@ export class IncidentDraft {
       immediateActions,
       recommendations,
     } = this.incidentReportForm.value;
-    if (
-      !title ||
-      !description ||
-      !severity ||
-      !category ||
-      !location ||
-      !occurredAt ||
-      !immediateActions ||
-      !recommendations
-    ) {
-      return;
-    }
     this.createIncidentReport.emit({
-      title,
-      description,
+      title: title!,
+      description: description!,
       severity: severity as 'Low' | 'Medium' | 'High',
       category: category as 'Safety' | 'Operational' | 'Equipment',
-      location,
-      occurredAt: new Date(occurredAt),
-      immediateActions,
-      recommendations,
+      location: location!,
+      occurredAt: new Date(occurredAt!),
+      immediateActions: immediateActions!,
+      recommendations: recommendations!,
     });
   }
 }

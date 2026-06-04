@@ -76,7 +76,7 @@
   </fieldset>
 
   <div class="modal-action flex justify-between w-full">
-    <button class="btn btn-accent">Crear</button>
+    <button class="btn btn-accent" [disabled]="!incidentReportForm.valid">Crear</button>
     <button type="button" class="btn" (click)="closeIncidentDraft.emit()">Cancelar</button>
   </div>
 </form>

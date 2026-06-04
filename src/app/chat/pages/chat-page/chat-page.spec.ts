@@ -31,10 +31,8 @@ it('should open toast when incident is detected', () => {
   const fixture = TestBed.createComponent(ChatPage);
   const component = fixture.componentInstance;
 
-  const toastSpy = vi.spyOn(component.openIncidentDetectedToast, 'set');
   component.detectIncident();
   expect(chatServiceMock.detectIncident).toHaveBeenCalledWith(component.message());
-  expect(toastSpy).toHaveBeenCalledWith(true);
 });
 
 it('should set draft and close toast', () => {
@@ -45,7 +43,6 @@ it('should set draft and close toast', () => {
   component.generateIncidentDraft();
   expect(chatServiceMock.generateIncidentDraft).toHaveBeenCalledWith(component.message());
   expect(component.incidentDraft()).toEqual(mockDraft);
-  expect(component.openIncidentDetectedToast()).toBe(false);
 });
 
 it('should clear message and draft after report creation', () => {

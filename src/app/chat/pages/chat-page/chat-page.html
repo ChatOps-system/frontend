@@ -6,12 +6,6 @@
     (detectIncident)="this.detectIncident()"
   />
 </section>
-@if (this.openIncidentDetectedToast()) {
-  <chat-incident-detected-toast
-    (closeIncidentDetectedToast)="onCloseIncidentDetectedToast()"
-    (generateIncidentDraft)="generateIncidentDraft()"
-  />
-}
 <dialog
   #createIncidentReportModal
   id="createIncidentReportModal"

@@ -2,22 +2,21 @@ import { Component, effect, ElementRef, inject, signal, viewChild } from '@angul
 import { ChatMessages } from '../../components/chat-messages/chat-messages';
 import { ChatInput } from '../../components/chat-input/chat-input';
 import { ChatService } from '../../services/chat.service';
-import { IncidentDetectedToast } from '../../components/incident-detected-toast/incident-detected-toast';
 import { IncidentReport } from '../../interfaces/incident-report.interface';
 import { IncidentDraft } from '../../components/incident-draft/incident-draft';
 import { tap } from 'rxjs';
 import { IncidentReportsService } from '../../services/incident-reports.service';
+import { toast } from 'ngx-sonner';
 
 @Component({
   selector: 'chat-page',
-  imports: [ChatMessages, ChatInput, IncidentDetectedToast, IncidentDraft],
+  imports: [ChatMessages, ChatInput, IncidentDraft],
   templateUrl: './chat-page.html',
 })
 export class ChatPage {
   message = signal<string>('');
   chatService = inject(ChatService);
   incidentReportsService = inject(IncidentReportsService);
-  openIncidentDetectedToast = signal<boolean>(false);
   incidentDraft = signal<IncidentReport | null>(null);
   createIncidentReportModal = viewChild<ElementRef<HTMLDialogElement>>('createIncidentReportModal');
 
@@ -34,12 +33,7 @@ export class ChatPage {
 
   onChangeMessage(message: string) {
     this.message.set(message);
-    this.openIncidentDetectedToast.set(false);
-  }
-
-  onCloseIncidentDetectedToast() {
-    this.incidentDraft.set(null);
-    this.openIncidentDetectedToast.set(false);
+    toast.dismiss();
   }
 
   onCloseIncidentDraft() {
@@ -49,7 +43,18 @@ export class ChatPage {
   detectIncident() {
     this.chatService.detectIncident(this.message()).subscribe((response) => {
       if (response.incidentDetected) {
-        this.openIncidentDetectedToast.set(true);
+        toast.info('Incidente Detectado', {
+          description: '¿Te gustaría crear un reporte?',
+          action: {
+            label: 'Crear',
+            onClick: () => {
+              this.generateIncidentDraft();
+            },
+          },
+          cancel: {
+            label: 'Cancelar',
+          },
+        });
       }
     });
   }
@@ -57,7 +62,7 @@ export class ChatPage {
   generateIncidentDraft() {
     this.chatService
       .generateIncidentDraft(this.message())
-      .pipe(tap(() => this.openIncidentDetectedToast.set(false)))
+      .pipe(tap(() => toast.dismiss()))
       .subscribe((response) => {
         this.incidentDraft.set(response);
       });
@@ -66,9 +71,12 @@ export class ChatPage {
   createIncidentReport(incidentReport: IncidentReport) {
     this.incidentReportsService
       .createIncidentReport(incidentReport)
-      .pipe(tap(() => this.message.set('')))
-      .subscribe((response) => {
-        this.incidentDraft.set(null);
-      });
+      .pipe(
+        tap(() => {
+          this.message.set('');
+          this.incidentDraft.set(null);
+        }),
+      )
+      .subscribe();
   }
 }

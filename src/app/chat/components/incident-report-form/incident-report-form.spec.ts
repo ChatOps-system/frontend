@@ -1,16 +1,16 @@
 import { TestBed } from '@angular/core/testing';
-import { IncidentDraft } from './incident-draft';
 import { ReactiveFormsModule } from '@angular/forms';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { IncidentReportForm } from './incident-report-form';
 describe('IncidentDraft - onSubmit', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [IncidentDraft, ReactiveFormsModule],
+      imports: [IncidentReportForm, ReactiveFormsModule],
     }).compileComponents();
   });
 
   it('should not emit when form is invalid', () => {
-    const fixture = TestBed.createComponent(IncidentDraft);
+    const fixture = TestBed.createComponent(IncidentReportForm);
     const component = fixture.componentInstance;
     const emitSpy = vi.spyOn(component.createIncidentReport, 'emit');
     component.onSubmit();
@@ -18,7 +18,7 @@ describe('IncidentDraft - onSubmit', () => {
   });
 
   it('should emit incident report when form is valid', () => {
-    const fixture = TestBed.createComponent(IncidentDraft);
+    const fixture = TestBed.createComponent(IncidentReportForm);
     const component = fixture.componentInstance;
     const emitSpy = vi.spyOn(component.createIncidentReport, 'emit');
     component.incidentReportForm.setValue({

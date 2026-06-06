@@ -3,3 +3,17 @@
 @plugin "daisyui" {
   themes: cupcake --default;
 }
+
+[data-sonner-toast] {
+  color: white !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+[data-sonner-toast][data-type='error'] {
+  background: #ef4444 !important;
+  border-left: 4px solid #b91c1c !important;
+}
+
+[data-sonner-toast][data-type='info'] {
+  background: #38bdf8 !important;
+}

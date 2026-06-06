@@ -3,8 +3,8 @@ import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { DetectIncidentResponse } from '../interfaces/detect-incident-response.interface';
 import { catchError, Observable, throwError } from 'rxjs';
-import { IncidentReport } from '../interfaces/incident-report.interface';
 import { toast } from 'ngx-sonner';
+import { IncidentDraftResponse } from '../interfaces/incident-draft-response.interface';
 
 @Injectable({ providedIn: 'root' })
 export class ChatService {
@@ -16,9 +16,11 @@ export class ChatService {
       .pipe(catchError(this.handleError));
   }
 
-  generateIncidentDraft(message: string): Observable<IncidentReport> {
+  generateIncidentDraft(message: string): Observable<IncidentDraftResponse> {
     return this.http
-      .post<IncidentReport>(`${environment.backendUrl}/chat/generate-incident-draft`, { message })
+      .post<IncidentDraftResponse>(`${environment.backendUrl}/chat/generate-incident-draft`, {
+        message,
+      })
       .pipe(catchError(this.handleError));
   }
 

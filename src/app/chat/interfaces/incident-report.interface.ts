@@ -7,7 +7,7 @@ export interface IncidentReport {
   severity: IncidentReportSeverity;
   category: IncidentReportCategory;
   location: string;
-  occurredAt: Date;
   immediateActions: string;
   recommendations: string;
+  occurredAt: string;
 }

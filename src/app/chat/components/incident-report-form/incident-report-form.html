@@ -13,9 +13,10 @@
   <fieldset class="fieldset">
     <legend class="fieldset-legend">Descripción</legend>
     <textarea
-      class="textarea textarea-bordered w-full h-28"
+      class="textarea textarea-bordered w-full h-28 resize-none"
       formControlName="description"
       placeholder="Describa el incidente"
+      rows="5"
     ></textarea>
   </fieldset>
 
@@ -23,21 +24,18 @@
     <fieldset class="fieldset">
       <legend class="fieldset-legend">Severidad</legend>
       <select class="select select-bordered w-full" formControlName="severity">
-        <option>Low</option>
-        <option>Medium</option>
-        <option>High</option>
-        <option>Critical</option>
+        <option value="Low">Leve</option>
+        <option value="Medium">Medio</option>
+        <option value="High">Grave</option>
       </select>
     </fieldset>
 
     <fieldset class="fieldset">
       <legend class="fieldset-legend">Categoría</legend>
       <select class="select select-bordered w-full" formControlName="category">
-        <option>Safety</option>
-        <option>Operational</option>
-        <option>Equipment</option>
-        <option>Environmental</option>
-        <option>Security</option>
+        <option value="Safety">Seguridad</option>
+        <option value="Operational">Operacional</option>
+        <option value="Equipment">Equipamiento</option>
       </select>
     </fieldset>
   </div>
@@ -60,23 +58,25 @@
   <fieldset class="fieldset">
     <legend class="fieldset-legend">Acciones Inmediatas</legend>
     <textarea
-      class="textarea textarea-bordered w-full"
+      class="textarea textarea-bordered w-full resize-none"
       formControlName="immediateActions"
       placeholder="Acciones tomadas inmediatamente"
+      rows="5"
     ></textarea>
   </fieldset>
 
   <fieldset class="fieldset">
     <legend class="fieldset-legend">Recomendaciones</legend>
     <textarea
-      class="textarea textarea-bordered w-full"
+      class="textarea textarea-bordered w-full resize-none"
       formControlName="recommendations"
       placeholder="Recomendaciones"
+      rows="5"
     ></textarea>
   </fieldset>
 
   <div class="modal-action flex justify-between w-full">
     <button class="btn btn-accent" [disabled]="!incidentReportForm.valid">Crear</button>
-    <button type="button" class="btn" (click)="closeIncidentDraft.emit()">Cancelar</button>
+    <button type="button" class="btn" (click)="closeIncidentReportForm.emit()">Cancelar</button>
   </div>
 </form>

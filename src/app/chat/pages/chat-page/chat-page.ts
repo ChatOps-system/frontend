@@ -1,49 +1,47 @@
-import { Component, effect, ElementRef, inject, signal, viewChild } from '@angular/core';
+import { Component, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { ChatMessages } from '../../components/chat-messages/chat-messages';
 import { ChatInput } from '../../components/chat-input/chat-input';
 import { ChatService } from '../../services/chat.service';
-import { IncidentReport } from '../../interfaces/incident-report.interface';
-import { IncidentDraft } from '../../components/incident-draft/incident-draft';
 import { tap } from 'rxjs';
 import { IncidentReportsService } from '../../services/incident-reports.service';
 import { toast } from 'ngx-sonner';
+import { IncidentReportForm } from '../../components/incident-report-form/incident-report-form';
+import { IncidentDraft } from '../../interfaces/incident-draft.interface';
+import { IncidentReport } from '../../interfaces/incident-report.interface';
 
 @Component({
   selector: 'chat-page',
-  imports: [ChatMessages, ChatInput, IncidentDraft],
+  imports: [ChatMessages, ChatInput, IncidentReportForm],
   templateUrl: './chat-page.html',
 })
 export class ChatPage {
   message = signal<string>('');
   chatService = inject(ChatService);
   incidentReportsService = inject(IncidentReportsService);
-  incidentDraft = signal<IncidentReport | null>(null);
-  createIncidentReportModal = viewChild<ElementRef<HTMLDialogElement>>('createIncidentReportModal');
-
-  incidentDraftEffect = effect(() => {
-    const modal = this.createIncidentReportModal();
-    const draft = this.incidentDraft();
-    if (!modal) return;
-    if (!draft) {
-      modal.nativeElement.close();
-      return;
-    }
-    modal.nativeElement.showModal();
-  });
+  incidentReportFormModal = viewChild<ElementRef<HTMLDialogElement>>('incidentReportFormModal');
+  incidentDraft = signal<IncidentDraft | null>(null);
+  incidentDraftIsLoading = signal<boolean>(false);
 
   onChangeMessage(message: string) {
     this.message.set(message);
     toast.dismiss();
   }
 
-  onCloseIncidentDraft() {
+  openIncidentReportFormModal() {
+    this.incidentDraftIsLoading.set(true);
+    this.incidentReportFormModal()?.nativeElement.showModal();
+  }
+  closeIncidentReportFormModal() {
+    this.incidentReportFormModal()?.nativeElement.close();
     this.incidentDraft.set(null);
+    this.incidentDraftIsLoading.set(false);
   }
 
   detectIncident() {
     this.chatService.detectIncident(this.message()).subscribe((response) => {
-      if (response.incidentDetected) {
+      if (response.isIncident) {
         toast.info('Incidente Detectado', {
+          duration: 10000,
           description: '¿Te gustaría crear un reporte?',
           action: {
             label: 'Crear',
@@ -60,18 +58,23 @@ export class ChatPage {
   }
 
   generateIncidentDraft() {
+    this.openIncidentReportFormModal();
     this.chatService
       .generateIncidentDraft(this.message())
-      .pipe(tap(() => toast.dismiss()))
+      .pipe(
+        tap(() => {
+          toast.dismiss();
+        }),
+      )
       .subscribe((response) => {
-        this.incidentDraft.set(response);
+        this.incidentDraft.set(response.incident_draft);
+        this.incidentDraftIsLoading.set(false);
       });
   }
-
   createIncidentReport(incidentReport: IncidentReport) {
+    this.closeIncidentReportFormModal();
     this.incidentReportsService.createIncidentReport(incidentReport).subscribe((res) => {
       this.message.set('');
-      this.incidentDraft.set(null);
     });
   }
 }

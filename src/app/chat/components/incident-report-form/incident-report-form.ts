@@ -1,16 +1,17 @@
 import { Component, effect, inject, input, output } from '@angular/core';
-import { IncidentReport } from '../../interfaces/incident-report.interface';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { IncidentReport } from '../../interfaces/incident-report.interface';
+import { IncidentDraft } from '../../interfaces/incident-draft.interface';
 
 @Component({
-  selector: 'incident-draft',
+  selector: 'incident-report-form',
   imports: [ReactiveFormsModule],
-  templateUrl: './incident-draft.html',
+  templateUrl: './incident-report-form.html',
 })
-export class IncidentDraft {
-  draft = input.required<IncidentReport>();
+export class IncidentReportForm {
+  draft = input.required<IncidentDraft>();
   createIncidentReport = output<IncidentReport>();
-  closeIncidentDraft = output<void>();
+  closeIncidentReportForm = output<void>();
   fb = inject(FormBuilder);
   incidentReportForm = this.fb.group({
     title: ['', Validators.required],
@@ -30,7 +31,7 @@ export class IncidentDraft {
       severity: draft.severity ?? '',
       category: draft.category ?? '',
       location: draft.location ?? '',
-      occurredAt: draft.occurredAt ? new Date().toISOString().slice(0, 16) : '',
+      occurredAt: '',
       immediateActions: draft.immediateActions ?? '',
       recommendations: draft.recommendations ?? '',
     });
@@ -54,7 +55,7 @@ export class IncidentDraft {
       severity: severity as 'Low' | 'Medium' | 'High',
       category: category as 'Safety' | 'Operational' | 'Equipment',
       location: location!,
-      occurredAt: new Date(occurredAt!),
+      occurredAt: occurredAt!,
       immediateActions: immediateActions!,
       recommendations: recommendations!,
     });

@@ -7,17 +7,23 @@
   />
 </section>
 <dialog
-  #createIncidentReportModal
-  id="createIncidentReportModal"
+  #incidentReportFormModal
+  id="incidentReportFormModal"
   class="modal modal-bottom sm:modal-middle"
 >
   <div class="modal-box">
     @if (this.incidentDraft(); as draft) {
-      <incident-draft
+      <incident-report-form
         [draft]="draft"
         (createIncidentReport)="createIncidentReport($event)"
-        (closeIncidentDraft)="onCloseIncidentDraft()"
+        (closeIncidentReportForm)="closeIncidentReportFormModal()"
       />
+    }
+    @if (this.incidentDraftIsLoading()) {
+      <div class="flex flex-col min-h-96 justify-center items-center gap-2">
+        <span class="loading loading-bars loading-xl"></span>
+        <span>Generando reporte de incidente</span>
+      </div>
     }
   </div>
 </dialog>

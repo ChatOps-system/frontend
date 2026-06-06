@@ -1,4 +1,5 @@
 export interface DetectIncidentResponse {
-  incidentDetected: boolean;
+  isIncident: boolean;
+  confidence: number;
   message: string;
 }

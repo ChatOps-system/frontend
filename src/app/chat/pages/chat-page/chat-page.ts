@@ -59,17 +59,11 @@ export class ChatPage {
 
   generateIncidentDraft() {
     this.openIncidentReportFormModal();
-    this.chatService
-      .generateIncidentDraft(this.message())
-      .pipe(
-        tap(() => {
-          toast.dismiss();
-        }),
-      )
-      .subscribe((response) => {
-        this.incidentDraft.set(response.incident_draft);
-        this.incidentDraftIsLoading.set(false);
-      });
+    this.chatService.generateIncidentDraft(this.message()).subscribe((response) => {
+      toast.dismiss();
+      this.incidentDraft.set(response.incident_draft);
+      this.incidentDraftIsLoading.set(false);
+    });
   }
   createIncidentReport(incidentReport: IncidentReport) {
     this.closeIncidentReportFormModal();

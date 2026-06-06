@@ -1,4 +1,4 @@
-import { TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { vi, it, expect } from 'vitest';
 import { ChatPage } from './chat-page';
@@ -17,6 +17,15 @@ const incidentReportsMock = {
   createIncidentReport: vi.fn(),
 };
 beforeEach(async () => {
+  Object.defineProperty(HTMLDialogElement.prototype, 'showModal', {
+    value: vi.fn(),
+    writable: true,
+  });
+
+  Object.defineProperty(HTMLDialogElement.prototype, 'close', {
+    value: vi.fn(),
+    writable: true,
+  });
   await TestBed.configureTestingModule({
     imports: [ChatPage],
     providers: [
@@ -35,14 +44,27 @@ it('should open toast when incident is detected', () => {
   expect(chatServiceMock.detectIncident).toHaveBeenCalledWith(component.message());
 });
 
-it('should set draft and close toast', () => {
-  const mockDraft = { title: 'test' };
+it('should set draft', () => {
+  const mockDraft = {
+    incident_draft: {
+      title: 't',
+      description: 'd',
+      severity: 'High' as IncidentReportSeverity,
+      category: 'Safety' as IncidentReportCategory,
+      location: 'x',
+      immediateActions: 'a',
+      recommendations: 'r',
+    },
+    message: 'draft generated',
+  };
   chatServiceMock.generateIncidentDraft.mockReturnValue(of(mockDraft));
   const fixture = TestBed.createComponent(ChatPage);
   const component = fixture.componentInstance;
+
   component.generateIncidentDraft();
+
   expect(chatServiceMock.generateIncidentDraft).toHaveBeenCalledWith(component.message());
-  expect(component.incidentDraft()).toEqual(mockDraft);
+  expect(component.incidentDraft()).toEqual(mockDraft.incident_draft);
 });
 
 it('should clear message and draft after report creation', () => {
@@ -55,7 +77,7 @@ it('should clear message and draft after report creation', () => {
     severity: 'High' as IncidentReportSeverity,
     category: 'Safety' as IncidentReportCategory,
     location: 'x',
-    occurredAt: new Date(),
+    occurredAt: '2026-06-02T10:00',
     immediateActions: 'a',
     recommendations: 'r',
   };

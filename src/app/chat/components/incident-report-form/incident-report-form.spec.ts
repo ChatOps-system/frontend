@@ -42,7 +42,7 @@ describe('IncidentDraft - onSubmit', () => {
         location: 'Building A',
         immediateActions: 'Evacuated',
         recommendations: 'Install sensors',
-        occurredAt: expect.any(Date),
+        occurredAt: '2026-06-02T10:00',
       }),
     );
   });

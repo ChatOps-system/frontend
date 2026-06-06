@@ -31,4 +31,4 @@ Ajustar los siguientes archivos:
 
 Variables a configurar:
 
-- `backendUrl`: URL de la aplicación Backend de **chatOps**
+- `backendUrl`: URL de la aplicación Backend

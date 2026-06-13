@@ -1,7 +1,7 @@
 import { Component, effect, inject, input, output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IncidentReport } from '../../interfaces/incident-report.interface';
-import { IncidentDraft } from '../../interfaces/incident-draft.interface';
+import { IncidentSuggestion } from '../../../ai/interfaces/incident-suggestion.interface';
 
 @Component({
   selector: 'incident-report-form',
@@ -9,9 +9,9 @@ import { IncidentDraft } from '../../interfaces/incident-draft.interface';
   templateUrl: './incident-report-form.html',
 })
 export class IncidentReportForm {
-  draft = input.required<IncidentDraft>();
+  incidentSuggestion = input.required<IncidentSuggestion>();
   createIncidentReport = output<IncidentReport>();
-  closeIncidentReportForm = output<void>();
+  closeIncidentReportFormDialog = output<void>();
   fb = inject(FormBuilder);
   incidentReportForm = this.fb.group({
     title: ['', Validators.required],
@@ -23,17 +23,17 @@ export class IncidentReportForm {
     immediateActions: ['', Validators.required],
     recommendations: ['', Validators.required],
   });
-  draftEffect = effect(() => {
-    const draft = this.draft();
+  incidentSuggestionEffect = effect(() => {
+    const incidentSuggestion = this.incidentSuggestion();
     this.incidentReportForm.patchValue({
-      title: draft.title ?? '',
-      description: draft.description ?? '',
-      severity: draft.severity ?? '',
-      category: draft.category ?? '',
-      location: draft.location ?? '',
+      title: incidentSuggestion.title ?? '',
+      description: incidentSuggestion.description ?? '',
+      severity: incidentSuggestion.severity ?? '',
+      category: incidentSuggestion.category ?? '',
+      location: incidentSuggestion.location ?? '',
       occurredAt: '',
-      immediateActions: draft.immediateActions ?? '',
-      recommendations: draft.recommendations ?? '',
+      immediateActions: incidentSuggestion.immediateActions ?? '',
+      recommendations: incidentSuggestion.recommendations ?? '',
     });
   });
 

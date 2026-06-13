@@ -1,25 +1,25 @@
-<chat-messages />
+<message-list />
 <section class="sticky bottom-0 left-0 right-0 p-4">
-  <chat-input
+  <message-composer
     [message]="this.message()"
-    (changeMessage)="this.onChangeMessage($event)"
+    (changeMessage)="this.updateMessage($event)"
     (detectIncident)="this.detectIncident()"
   />
 </section>
 <dialog
-  #incidentReportFormModal
-  id="incidentReportFormModal"
+  #incidentReportFormDialog
+  id="incidentReportFormDialog"
   class="modal modal-bottom sm:modal-middle"
 >
   <div class="modal-box">
-    @if (this.incidentDraft(); as draft) {
+    @if (this.incidentSuggestion(); as incidentSuggestion) {
       <incident-report-form
-        [draft]="draft"
+        [incidentSuggestion]="incidentSuggestion"
         (createIncidentReport)="createIncidentReport($event)"
-        (closeIncidentReportForm)="closeIncidentReportFormModal()"
+        (closeIncidentReportFormDialog)="closeIncidentReportFormDialog()"
       />
     }
-    @if (this.incidentDraftIsLoading()) {
+    @if (this.incidentSuggestionIsLoading()) {
       <div class="flex flex-col min-h-96 justify-center items-center gap-2">
         <span class="loading loading-bars loading-xl"></span>
         <span>Generando reporte de incidente</span>

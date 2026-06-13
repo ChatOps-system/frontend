@@ -1,10 +1,10 @@
 import { Routes } from '@angular/router';
-import { ChatSidebar } from './chat/layout/chat-sidebar/chat-sidebar';
+import { ChatLayout } from './chat/layout/chat-layout/chat-layout';
 
 export const routes: Routes = [
   {
     path: '',
-    component: ChatSidebar,
+    component: ChatLayout,
     loadChildren: () => import('./chat/chat.routes').then((m) => m.default),
   },
   {

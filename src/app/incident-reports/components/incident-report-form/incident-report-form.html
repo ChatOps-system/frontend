@@ -77,6 +77,8 @@
 
   <div class="modal-action flex justify-between w-full">
     <button class="btn btn-accent" [disabled]="!incidentReportForm.valid">Crear</button>
-    <button type="button" class="btn" (click)="closeIncidentReportForm.emit()">Cancelar</button>
+    <button type="button" class="btn" (click)="closeIncidentReportFormDialog.emit()">
+      Cancelar
+    </button>
   </div>
 </form>

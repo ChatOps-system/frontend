@@ -1,23 +1,26 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { vi, it, expect } from 'vitest';
 import { ChatPage } from './chat-page';
-import { ChatService } from '../../services/chat.service';
 import {
   IncidentReportCategory,
   IncidentReportSeverity,
-} from '../../interfaces/incident-report.interface';
-import { IncidentReportsService } from '../../services/incident-reports.service';
+} from '../../../incident-reports/interfaces/incident-report.interface';
+import { IncidentReportService } from '../../../incident-reports/services/incident-report.service';
+import { IncidentDetectionService } from '../../../ai/services/incident-detection.service';
+import { IncidentSuggestionService } from '../../../ai/services/incident-suggestion.service';
 
-const chatServiceMock = {
+const incidentDetectionServiceMock = {
   detectIncident: vi.fn(),
-  generateIncidentDraft: vi.fn(),
 };
-const incidentReportsMock = {
+const incidentSuggestionServiceMock = {
+  generateIncidentSuggestion: vi.fn(),
+};
+const incidentReportServiceMock = {
   createIncidentReport: vi.fn(),
 };
 beforeEach(async () => {
-  Object.defineProperty(HTMLDialogElement.prototype, 'showModal', {
+  Object.defineProperty(HTMLDialogElement.prototype, 'show', {
     value: vi.fn(),
     writable: true,
   });
@@ -29,24 +32,25 @@ beforeEach(async () => {
   await TestBed.configureTestingModule({
     imports: [ChatPage],
     providers: [
-      { provide: ChatService, useValue: chatServiceMock },
-      { provide: IncidentReportsService, useValue: incidentReportsMock },
+      { provide: IncidentDetectionService, useValue: incidentDetectionServiceMock },
+      { provide: IncidentSuggestionService, useValue: incidentSuggestionServiceMock },
+      { provide: IncidentReportService, useValue: incidentReportServiceMock },
     ],
   }).compileComponents();
 });
 
 it('should open toast when incident is detected', () => {
-  chatServiceMock.detectIncident.mockReturnValue(of({ incidentDetected: true }));
+  incidentDetectionServiceMock.detectIncident.mockReturnValue(of({ incidentDetected: true }));
   const fixture = TestBed.createComponent(ChatPage);
   const component = fixture.componentInstance;
 
   component.detectIncident();
-  expect(chatServiceMock.detectIncident).toHaveBeenCalledWith(component.message());
+  expect(incidentDetectionServiceMock.detectIncident).toHaveBeenCalledWith(component.message());
 });
 
-it('should set draft', () => {
-  const mockDraft = {
-    incident_draft: {
+it('should set incident suggestion', () => {
+  const mockSuggestion = {
+    incidentSuggestion: {
       title: 't',
       description: 'd',
       severity: 'High' as IncidentReportSeverity,
@@ -55,22 +59,21 @@ it('should set draft', () => {
       immediateActions: 'a',
       recommendations: 'r',
     },
-    message: 'draft generated',
+    message: 'incident suggestion generated',
   };
-  chatServiceMock.generateIncidentDraft.mockReturnValue(of(mockDraft));
+  incidentSuggestionServiceMock.generateIncidentSuggestion.mockReturnValue(of(mockSuggestion));
   const fixture = TestBed.createComponent(ChatPage);
   const component = fixture.componentInstance;
 
-  component.generateIncidentDraft();
+  component.generateIncidentSuggestion();
 
-  expect(chatServiceMock.generateIncidentDraft).toHaveBeenCalledWith(component.message());
-  expect(component.incidentDraft()).toEqual(mockDraft.incident_draft);
+  expect(incidentSuggestionServiceMock.generateIncidentSuggestion).toHaveBeenCalledWith(
+    component.message(),
+  );
+  expect(component.incidentSuggestion()).toEqual(mockSuggestion.incidentSuggestion);
 });
 
-it('should clear message and draft after report creation', () => {
-  incidentReportsMock.createIncidentReport.mockReturnValue(of({ success: true }));
-  const fixture = TestBed.createComponent(ChatPage);
-  const component = fixture.componentInstance;
+it('should clear message and suggestion after report creation', () => {
   const payload = {
     title: 't',
     description: 'd',
@@ -81,8 +84,19 @@ it('should clear message and draft after report creation', () => {
     immediateActions: 'a',
     recommendations: 'r',
   };
+  incidentReportServiceMock.createIncidentReport.mockReturnValue(
+    of({
+      message: 'ok',
+      incidentReport: {
+        id: 1,
+        ...payload,
+      },
+    }),
+  );
+  const fixture = TestBed.createComponent(ChatPage);
+  const component = fixture.componentInstance;
   component.createIncidentReport(payload);
-  expect(incidentReportsMock.createIncidentReport).toHaveBeenCalledWith(payload);
+  expect(incidentReportServiceMock.createIncidentReport).toHaveBeenCalledWith(payload);
   expect(component.message()).toBe('');
-  expect(component.incidentDraft()).toBeNull();
+  expect(component.incidentSuggestion()).toBeNull();
 });

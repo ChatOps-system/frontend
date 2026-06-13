@@ -3,8 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { of } from 'rxjs';
 import { vi, it, expect, beforeEach } from 'vitest';
 
-import { IncidentReportsService } from './incident-reports.service';
 import { environment } from '../../../environments/environment';
+import { IncidentReportService } from './incident-report.service';
 
 const httpMock = {
   post: vi.fn(),
@@ -12,13 +12,13 @@ const httpMock = {
 
 beforeEach(() => {
   TestBed.configureTestingModule({
-    providers: [IncidentReportsService, { provide: HttpClient, useValue: httpMock }],
+    providers: [IncidentReportService, { provide: HttpClient, useValue: httpMock }],
   });
 
   httpMock.post.mockReset();
 });
 it('should call createIncidentReport endpoint', () => {
-  const service = TestBed.inject(IncidentReportsService);
+  const service = TestBed.inject(IncidentReportService);
 
   const incident = {
     title: 'A',

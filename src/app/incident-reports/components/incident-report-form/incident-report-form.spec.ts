@@ -2,7 +2,8 @@ import { TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { IncidentReportForm } from './incident-report-form';
-describe('IncidentDraft - onSubmit', () => {
+
+describe('IncidentSuggestion - onSubmit', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [IncidentReportForm, ReactiveFormsModule],

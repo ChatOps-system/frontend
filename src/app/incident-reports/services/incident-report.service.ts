@@ -6,7 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
-export class IncidentReportsService {
+export class IncidentReportService {
   http = inject(HttpClient);
   constructor() {}
 

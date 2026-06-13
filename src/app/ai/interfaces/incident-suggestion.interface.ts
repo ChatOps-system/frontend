@@ -1,6 +1,9 @@
-import { IncidentReportCategory, IncidentReportSeverity } from './incident-report.interface';
+import {
+  IncidentReportCategory,
+  IncidentReportSeverity,
+} from '../../incident-reports/interfaces/incident-report.interface';
 
-export interface IncidentDraft {
+export interface IncidentSuggestion {
   title: string;
   description: string;
   severity: IncidentReportSeverity;

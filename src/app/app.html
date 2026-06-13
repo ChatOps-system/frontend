@@ -1,2 +1,18 @@
 <router-outlet />
-<ngx-sonner-toaster [richColors]="true" [offset]="80" [position]="'bottom-center'" />
+<ngx-sonner-toaster
+  duration="8000"
+  [toastOptions]="{
+    unstyled: true,
+    classes: {
+      toast: 'flex items-center gap-x-2 px-4 py-3 rounded-lg shadow-md text-white',
+      success: 'bg-green-600',
+      error: 'bg-red-600',
+      warning: 'bg-yellow-500',
+      info: 'bg-blue-500',
+      title: 'font-semibold text-sm',
+      description: 'text-xs opacity-80',
+    },
+  }"
+  [offset]="80"
+  [position]="'bottom-center'"
+/>

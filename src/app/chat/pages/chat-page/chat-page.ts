@@ -1,74 +1,109 @@
 import { Component, ElementRef, inject, signal, viewChild } from '@angular/core';
-import { ChatMessages } from '../../components/chat-messages/chat-messages';
-import { ChatInput } from '../../components/chat-input/chat-input';
-import { ChatService } from '../../services/chat.service';
-import { tap } from 'rxjs';
-import { IncidentReportsService } from '../../services/incident-reports.service';
+import { IncidentReportForm } from '../../../incident-reports/components/incident-report-form/incident-report-form';
+import { IncidentSuggestion } from '../../../ai/interfaces/incident-suggestion.interface';
+import { IncidentReport } from '../../../incident-reports/interfaces/incident-report.interface';
+import { MessageList } from '../../components/message-list/message-list';
+import { MessageComposer } from '../../components/message-composer/message-composer';
+import { IncidentReportService } from '../../../incident-reports/services/incident-report.service';
 import { toast } from 'ngx-sonner';
-import { IncidentReportForm } from '../../components/incident-report-form/incident-report-form';
-import { IncidentDraft } from '../../interfaces/incident-draft.interface';
-import { IncidentReport } from '../../interfaces/incident-report.interface';
+import { IncidentSuggestionService } from '../../../ai/services/incident-suggestion.service';
+import { IncidentDetectionService } from '../../../ai/services/incident-detection.service';
 
 @Component({
   selector: 'chat-page',
-  imports: [ChatMessages, ChatInput, IncidentReportForm],
+  imports: [MessageList, MessageComposer, IncidentReportForm],
   templateUrl: './chat-page.html',
 })
 export class ChatPage {
   message = signal<string>('');
-  chatService = inject(ChatService);
-  incidentReportsService = inject(IncidentReportsService);
-  incidentReportFormModal = viewChild<ElementRef<HTMLDialogElement>>('incidentReportFormModal');
-  incidentDraft = signal<IncidentDraft | null>(null);
-  incidentDraftIsLoading = signal<boolean>(false);
+  incidentSuggestionService = inject(IncidentSuggestionService);
+  incidentDetectionService = inject(IncidentDetectionService);
 
-  onChangeMessage(message: string) {
+  incidentReportService = inject(IncidentReportService);
+  incidentReportFormDialog = viewChild<ElementRef<HTMLDialogElement>>('incidentReportFormDialog');
+  incidentSuggestion = signal<IncidentSuggestion | null>(null);
+  incidentSuggestionIsLoading = signal<boolean>(false);
+
+  updateMessage(message: string) {
     this.message.set(message);
     toast.dismiss();
   }
 
-  openIncidentReportFormModal() {
-    this.incidentDraftIsLoading.set(true);
-    this.incidentReportFormModal()?.nativeElement.showModal();
+  openIncidentReportFormDialog() {
+    this.incidentSuggestionIsLoading.set(true);
+    this.incidentReportFormDialog()?.nativeElement.show();
   }
-  closeIncidentReportFormModal() {
-    this.incidentReportFormModal()?.nativeElement.close();
-    this.incidentDraft.set(null);
-    this.incidentDraftIsLoading.set(false);
+  closeIncidentReportFormDialog() {
+    this.incidentReportFormDialog()?.nativeElement.close();
+    this.incidentSuggestion.set(null);
+    this.incidentSuggestionIsLoading.set(false);
   }
 
   detectIncident() {
-    this.chatService.detectIncident(this.message()).subscribe((response) => {
-      if (response.isIncident) {
-        toast.info('Incidente Detectado', {
-          duration: 10000,
-          description: '¿Te gustaría crear un reporte?',
-          action: {
-            label: 'Crear',
-            onClick: () => {
-              this.generateIncidentDraft();
+    this.incidentDetectionService.detectIncident(this.message()).subscribe({
+      next: (response) => {
+        if (response.isIncident) {
+          toast.info('Incidente Detectado', {
+            description: '¿Te gustaría crear un reporte de incidente?',
+            action: {
+              label: 'Crear',
+              onClick: () => this.generateIncidentSuggestion(),
             },
-          },
-          cancel: {
-            label: 'Cancelar',
-          },
-        });
-      }
+            cancel: {
+              label: 'Cerrar',
+            },
+          });
+        }
+      },
+      error: this.handleError,
     });
   }
 
-  generateIncidentDraft() {
-    this.openIncidentReportFormModal();
-    this.chatService.generateIncidentDraft(this.message()).subscribe((response) => {
-      toast.dismiss();
-      this.incidentDraft.set(response.incident_draft);
-      this.incidentDraftIsLoading.set(false);
+  generateIncidentSuggestion() {
+    this.openIncidentReportFormDialog();
+    this.incidentSuggestionService.generateIncidentSuggestion(this.message()).subscribe({
+      next: (response) => {
+        toast.dismiss();
+        this.incidentSuggestion.set(response.incidentSuggestion);
+        this.incidentSuggestionIsLoading.set(false);
+      },
+      error: (err) => {
+        this.handleError(err);
+        this.closeIncidentReportFormDialog();
+      },
     });
   }
+
   createIncidentReport(incidentReport: IncidentReport) {
-    this.closeIncidentReportFormModal();
-    this.incidentReportsService.createIncidentReport(incidentReport).subscribe((res) => {
-      this.message.set('');
+    this.closeIncidentReportFormDialog();
+    this.incidentReportService.createIncidentReport(incidentReport).subscribe({
+      next: (res) => {
+        toast.info(`Reporte de Incidente creado exitosamente`, {
+          description: `Reporte de Incidente creado con titulo: ${res.incidentReport.title}`,
+        });
+        this.message.set('');
+      },
+      error: this.handleError,
     });
+  }
+
+  handleError(err: any) {
+    if (err.status === 0) {
+      toast.error('Servicio Backend no response', {
+        description: `${err.message}`,
+      });
+    } else if (err.status === 422) {
+      toast.error('No se pudo generar una sugerencia válida', {
+        description: 'El modelo respondió con un formato inválido o incompleto.',
+      });
+    } else if (err.status === 503) {
+      toast.error('Servicio de Inferencia no response', {
+        description: `${err.message}`,
+      });
+    } else {
+      toast.error('Error inesperado', {
+        description: err?.message || 'Ha ocurrido un error desconocido',
+      });
+    }
   }
 }

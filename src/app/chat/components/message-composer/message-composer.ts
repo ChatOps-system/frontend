@@ -1,11 +1,11 @@
 import { Component, effect, input, output } from '@angular/core';
 
 @Component({
-  selector: 'chat-input',
+  selector: 'message-composer',
   imports: [],
-  templateUrl: './chat-input.html',
+  templateUrl: './message-composer.html',
 })
-export class ChatInput {
+export class MessageComposer {
   message = input.required<string>();
   changeMessage = output<string>();
   detectIncident = output<void>();
@@ -17,7 +17,7 @@ export class ChatInput {
     }
     const timeout = setTimeout(() => {
       this.detectIncident.emit();
-    }, 2000);
+    }, 1000);
     onCleanup(() => {
       clearTimeout(timeout);
     });
